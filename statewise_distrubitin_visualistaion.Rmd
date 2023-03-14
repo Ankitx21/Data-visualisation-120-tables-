@@ -1,0 +1,466 @@
+---
+title: "State-wise ComComparison of crops  Productivity (2016 to 2018)"
+author: "Ankit Varma"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+``## markdown
+```{r}
+library(readr)
+library(dplyr) 
+library(tidyr) 
+library(stringr)
+library(ggplot2)
+Project_Combine <- read_csv("Project_1.xlsx - combined_ankit.csv")
+View(Project_Combine)
+```
+
+
+
+# Filtering out data into different years 
+```{r}
+year_2016 <- filter( Project_Combine, years == 2016)
+
+year_2017 <- filter(Project_Combine, years == 2017)
+
+year_2018 <- filter(Project_Combine, years == 2018)
+```
+
+
+
+## Grouping the states into regions 
+## Create a new column called 'region' based on the state name
+
+```{r}
+region_11 <- Project_Combine %>%
+  mutate(region = case_when(
+    states_uts %in% c("JAMMU & KASHMIR", "HIMACHAL PRADESH", "PUNJAB", "HARYANA", "RAJASTHAN","UTTARAKHAND") ~ "Northern",
+    states_uts %in% c( "UTTAR PRADESH", "BIHAR", "JHARKHAND", "ODISHA", "WEST BENGAL","CHHATTISGARH") ~ "Eastern",
+    states_uts %in% c("ANDHRA PRADESH", "KARNATAKA", "KERALA", "TAMIL NADU", "TELANGANA") ~ "Southern",
+    states_uts %in% c("GUJARAT", "MAHARASHTRA") ~ "Western",
+    states_uts %in% c("ARUNACHAL  PRADESH","ASSAM", "MIZORAM", "NAGALAND","SIKKIM", "MEGHALAYA", "MANIPUR", "TRIPURA" ) ~ "North-Eastern",
+    TRUE ~ "Other"
+  ))
+
+```
+
+## Group the data by region and summarize the mean production
+```{r}
+mean <- region_11 %>%
+  group_by(region) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+unique(region_11$region)
+
+```
+
+
+# Filtering individual crops data
+
+```{r}
+grapes<- filter(region_11, crops_name == 'grapes')
+
+guava <- filter(region_11, crops_name == 'guava')
+
+mango <- filter(region_11, crops_name == 'mango')
+
+papaya <- filter(region_11, crops_name == 'papaya')
+
+pineappple <- filter(region_11, crops_name == 'pineappple')
+
+```
+
+# Numerical Summary 
+
+## Dimensions of the dataset tables 
+```{r}
+dim(Project_Combine)
+dim(region_11)
+
+```
+```{r}
+dim(region_11) 
+
+```
+<br>
+
+## Mean productivity of each region
+
+```{r}
+region_11 %>%
+  group_by(region) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+
+
+```
+
+## Mean productivity of each state
+
+```{r}
+region_11 %>%
+  group_by(states_uts) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+
+
+```
+
+## Mean productivity of each year
+```{r}
+region_11 %>%
+  group_by(years) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+```
+
+## Mean productivity of each crop
+
+```{r}
+region_11 %>%
+  group_by(crops_name) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+```
+
+# Filtering individual crops data
+
+```{r}
+grapes<- filter(region_11, crops_name == 'grapes')
+
+guava <- filter(region_11, crops_name == 'guava')
+
+mango <- filter(region_11, crops_name == 'mango')
+
+papaya <- filter(region_11, crops_name == 'papaya')
+
+pineappple <- filter(region_11, crops_name == 'pineappple')
+```
+
+
+# Plotting individual crops data 
+
+
+  
+  ## Plotting data of grapes for all years 
+  
+```{r}
+g9 <- ggplot(grapes , aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g9 + ggtitle("Productivity of Grapes regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+```
+  
+   ## Plotting data of Guava for all years
+```{r}
+g10 <- ggplot(guava , aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g10 + ggtitle("Productivity of Guava regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+```
+   
+    ## Plotting data of mango for all years 
+```{r}
+g11 <- ggplot(mango , aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g11 + ggtitle("Productivity of mango regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+```
+    
+    ## Plotting data of papaya for all years 
+```{r}
+g12 <- ggplot(papaya, aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g12 + ggtitle("Productivity of papayaregionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+
+```
+    
+    ## Plotting data of pineapple for all years
+```{r}
+g13 <- ggplot(pineappple, aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g13 + ggtitle("Productivity of pineapple regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+```
+   
+## Combined crops plot
+
+ ## Plotting a Jitter graph for the whole data
+ 
+```{r}
+g1 <- ggplot(Project_Combine, aes(crops_name, productivity_mt_ha, color = states_uts))
+g1+ geom_jitter()
+```
+ 
+     ## Plotting a bar graph for the whole data
+     
+```{r}
+g2 <- ggplot(Project_Combine, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))+ geom_col()
+g2+ ggtitle( "States and there productivity for all crops (2016-2018)") +
+  xlab( "Productivity in Metric ton/Hectare  ") +
+  ylab(" States ")
+
+```
+     
+       ## Plotting bar graph for the data of all crops only for 2016 year
+```{r}
+g3 <- ggplot(year_2016, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))
+g3 + geom_col()
+```
+
+      ## Plotting bar graph for the data of all crops only for 2017 year
+      
+```{r}
+g4 <- ggplot(year_2017, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))
+g4 + geom_col()
+```
+    
+      ## Plotting bar graph for the data of all crops only for 2018 year
+```{r}
+g5 <- ggplot(year_2018, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))
+g5 + geom_col()
+```
+  
+    ## Plotting bar graph of the data from new column region and Productivity Mt/Ha 
+```{r}
+g6 <- ggplot(region_11, aes(region, productivity_mt_ha, color = crops_name, fill = crops_name)) + geom_col()
+g6+ ggtitle( "Region and there productivity for all crops (2016-2018)") +
+  xlab( "States ") +
+  ylab(" Productivity in Metric ton/Hectare  ")
+```
+    
+      ## Plotting all crops data for each year 
+```{r}
+g7 <- ggplot(Project_Combine, aes(years, productivity_mt_ha, color = crops_name, fill = crops_name)) + geom_col()
+g7+ ggtitle( "Productivity of all crops (2016-2018)") +
+  xlab( " Year ") +
+  ylab(" Productivity in Metric ton/Hectare  ")
+```
+  ## Append
+  
+  
+library(readr)
+library(dplyr) 
+library(tidyr) 
+library(stringr)
+library(ggplot2)
+Project_Combine <- read_csv("Project_1.xlsx - combined_ankit.csv")
+View(Project_Combine)
+
+unique(Project_Combine$crops_name)
+
+# Filtering out data into different years 
+year_2016 <- filter( Project_Combine, years == 2016)
+
+year_2017 <- filter(Project_Combine, years == 2017)
+
+year_2018 <- filter(Project_Combine, years == 2018)
+
+
+
+
+## Grouping the states into regions 
+## Create a new column called 'region' based on the state name
+
+region_11 <- Project_Combine %>%
+  mutate(region = case_when(
+    states_uts %in% c("JAMMU & KASHMIR", "HIMACHAL PRADESH", "PUNJAB", "HARYANA", "RAJASTHAN","UTTARAKHAND") ~ "Northern",
+    states_uts %in% c( "UTTAR PRADESH", "BIHAR", "JHARKHAND", "ODISHA", "WEST BENGAL","CHHATTISGARH") ~ "Eastern",
+    states_uts %in% c("ANDHRA PRADESH", "KARNATAKA", "KERALA", "TAMIL NADU", "TELANGANA") ~ "Southern",
+    states_uts %in% c("GUJARAT", "MAHARASHTRA") ~ "Western",
+    states_uts %in% c("ARUNACHAL  PRADESH","ASSAM", "MIZORAM", "NAGALAND","SIKKIM", "MEGHALAYA", "MANIPUR", "TRIPURA" ) ~ "North-Eastern",
+    TRUE ~ "Other"
+  ))
+
+
+## Group the data by region and summarize the mean production
+
+mean <- region_11 %>%
+  group_by(region) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+unique(region_11$region)
+
+
+## Mean productivity of each state
+
+region_11 %>%
+  group_by(states_uts) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+
+
+
+  ## Mean productivity of each year
+  
+ 
+region_11 %>%
+  group_by(years) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+
+
+  
+  ## Mean productivity of each crop
+ 
+region_11 %>%
+  group_by(crops_name) %>%
+  summarize(mean_productivity_mt_ha = mean(`productivity_mt_ha`, na.rm = TRUE))
+
+
+
+
+# Filtering individual crops data
+
+
+grapes<- filter(region_11, crops_name == 'grapes')
+
+guava <- filter(region_11, crops_name == 'guava')
+
+mango <- filter(region_11, crops_name == 'mango')
+
+papaya <- filter(region_11, crops_name == 'papaya')
+
+pineappple <- filter(region_11, crops_name == 'pineappple')
+
+
+# Plotting individual crops data 
+
+
+  
+  ## Plotting data of Cumin for all years 
+  
+g9 <- ggplot(grapes , aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g9 + ggtitle("Productivity of Grapes regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+
+
+
+
+  
+  
+  ## Plotting data of Garilic for all years 
+  
+g10 <- ggplot(guava , aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g10 + ggtitle("Productivity of Guava regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+
+
+
+
+  
+  
+  ## Plotting data of Ginger for all years 
+ 
+g11 <- ggplot(mango , aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g11 + ggtitle("Productivity of mango regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+
+
+
+
+
+
+  
+  
+  ## Plotting data of Tamarind for all years 
+  
+g12 <- ggplot(papaya, aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g12 + ggtitle("Productivity of papayaregionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+
+
+
+  
+  
+  ## Plotting data of Turmeric for all years
+ 
+g13 <- ggplot(pineappple, aes(states_uts, productivity_mt_ha))+ geom_col( color = 'blue', fill = 'blue')
+g13 + ggtitle("Productivity of pineapple regionwise (2016-2018)") +
+  xlab( " States ") +
+  ylab(" Productivity in Metric ton/Hectare ")+ theme(axis.text.x = element_text(angle = 90, hjust = 0,vjust=0.5))
+
+
+  
+  ## Plotting a Jitter graph for the whole data
+  
+  
+  
+g1 <- ggplot(Project_Combine, aes(crops_name, productivity_mt_ha, color = states_uts))
+g1+ geom_jitter()
+
+
+
+
+  
+  ## Plotting a bar graph for the whole data
+  
+  
+
+
+g2 <- ggplot(Project_Combine, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))+ geom_col()
+g2+ ggtitle( "States and there productivity for all crops (2016-2018)") +
+  xlab( "Productivity in Metric ton/Hectare  ") +
+  ylab(" States ")
+
+
+  
+  ## Plotting bar graph for the data of all crops only for 2016 year
+
+g3 <- ggplot(year_2016, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))
+g3 + geom_col()
+
+
+
+  
+  ## Plotting bar graph for the data of all crops only for 2017 year
+  
+ 
+g4 <- ggplot(year_2017, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))
+g4 + geom_col()
+
+
+
+
+  
+  ## Plotting bar graph for the data of all crops only for 2018 year
+
+g5 <- ggplot(year_2018, aes(productivity_mt_ha, states_uts, color = crops_name, fill = crops_name))
+g5 + geom_col()
+
+
+  
+  ## Plotting bar graph of the data from new column region and Productivity Mt/Ha 
+
+
+g6 <- ggplot(region_11, aes(region, productivity_mt_ha, color = crops_name, fill = crops_name)) + geom_col()
+g6+ ggtitle( "Region and there productivity for all crops (2016-2018)") +
+  xlab( "States ") +
+  ylab(" Productivity in Metric ton/Hectare  ")
+
+
+
+  
+  ## Plotting all crops data for each year 
+ 
+g7 <- ggplot(Project_Combine, aes(years, productivity_mt_ha, color = crops_name, fill = crops_name)) + geom_col()
+g7+ ggtitle( "Productivity of all crops (2016-2018)") +
+  xlab( " Year ") +
+  ylab(" Productivity in Metric ton/Hectare  ")
+
+
+
+  
+  ## Plotting facet_wrap graph of Productivity of all crops for each year and grouped in region 
+  
+
+g8 <- ggplot(region_11, aes(years, productivity_mt_ha, color = crops_name, fill = crops_name)) + geom_col()+ facet_wrap(~region)
+g8 + ggtitle( "Productivity of crops regionwise (2016-2018)") +
+  xlab( " Year ") +
+  ylab(" Productivity in Metric ton/Hectare ")
+
+
+  
+  
+    
